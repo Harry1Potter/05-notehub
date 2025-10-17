@@ -1,5 +1,5 @@
 export interface Note {
-  id: number;
+  id: string;
   title: string;
   content: string;
   createdAt: string;
@@ -7,8 +7,8 @@ export interface Note {
   tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
 }
 
-export interface NewNodeData {
+export interface NewNoteData {
   title: string;
   content: string;
-  tag: string;
+  tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
 }

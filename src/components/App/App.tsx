@@ -8,14 +8,16 @@ import NoteList from "../NoteList/NoteList";
 import type { Note } from "../../types/note";
 import Pagination from "../Pagination/Pagination";
 import css from "./App.module.css"
+import { useDebounce } from "use-debounce";
 
 export default function App() {
   const [topic, setTopic] = useState("");
+  const [debouncedTopic] = useDebounce(topic, 500)
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data, isLoading, isError } = useQuery<{ notes: Note[]; totalPages: number }, Error>({
-    queryKey: ["notes", topic, currentPage],
+    queryKey: ["notes", debouncedTopic, currentPage],
     queryFn: ({ queryKey }) => {
       const [, search, page] = queryKey;
       return fetchNotes(search as string, page as number);
@@ -34,7 +36,7 @@ export default function App() {
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox onSubmit={handleSearch} />
+        <SearchBox onValueChange={handleSearch} />
         <Pagination
           currentPage={currentPage}
           totalPages={data?.totalPages ?? 0}

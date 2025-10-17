@@ -2,16 +2,16 @@ import { useState } from "react";
 import css from "./SearchBox.module.css"
 
 interface SearchBoxProps {
-  onSubmit: (topic: string) => void;
+  onValueChange: (topic: string) => void;
 }
 
-export default function SearchBox({ onSubmit }: SearchBoxProps) {
+export default function SearchBox({ onValueChange }: SearchBoxProps) {
   const [topic, setTopic] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTopic(value);
-    onSubmit(value);
+    onValueChange(value);
   };
 
   return (
