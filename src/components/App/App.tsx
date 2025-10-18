@@ -7,16 +7,19 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import NoteList from "../NoteList/NoteList";
 import type { Note } from "../../types/note";
 import Pagination from "../Pagination/Pagination";
-import css from "./App.module.css"
+import css from "./App.module.css";
 import { useDebounce } from "use-debounce";
 
 export default function App() {
   const [topic, setTopic] = useState("");
-  const [debouncedTopic] = useDebounce(topic, 500)
+  const [debouncedTopic] = useDebounce(topic, 500);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data, isLoading, isError } = useQuery<{ notes: Note[]; totalPages: number }, Error>({
+  const { data, isLoading, isError, isSuccess } = useQuery<
+    { notes: Note[]; totalPages: number },
+    Error
+  >({
     queryKey: ["notes", debouncedTopic, currentPage],
     queryFn: ({ queryKey }) => {
       const [, search, page] = queryKey;
@@ -24,6 +27,8 @@ export default function App() {
     },
     placeholderData: keepPreviousData,
   });
+
+  const totalPages = data?.totalPages ?? 0;
 
   const handleSearch = (newTopic: string) => {
     setTopic(newTopic);
@@ -37,11 +42,14 @@ export default function App() {
     <div className={css.app}>
       <header className={css.toolbar}>
         <SearchBox onValueChange={handleSearch} />
-        <Pagination
-          currentPage={currentPage}
-          totalPages={data?.totalPages ?? 0}
-          onPageChange={setCurrentPage}
-        />
+        {isSuccess && totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
+
         <button className={css.button} type="button" onClick={openModal}>
           Create Note
         </button>
